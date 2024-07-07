@@ -1,0 +1,23 @@
+
+
+
+<table  width="800px" border="2px">
+    <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Image</th>
+    </tr>
+    <tr>{{#each products}}
+        <td>{{this.name}}</td>
+         <td>{{this.des}}</td>
+          <td>{{this.price}}</td>
+        <td><img width="70px" height="40px"  src="/productImages/{{this._id}}.jpg" alt="no image"></td>
+       
+        <td><a href="/admin/edit/{{this._id}}"><button type="button">Edit</button></a></td>
+        <td><a href="/admin/delete/{{this._id}}"><button type="button" onclick="return confirm('confirm delete {{this.name}}')">delete</button></a></td>
+        
+    </tr>{{/each}}
+</table>
+
+<div class="btn btn-light " style="margin-left: 600px;margin-top:100px"><a style="text-decoration: none;"  href='/admin/add-products'>add products</a></div>

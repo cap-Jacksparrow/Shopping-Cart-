@@ -1,0 +1,196 @@
+var db=require('../config/connection')
+var bcrypt=require('bcrypt')
+var objectId=require("mongodb").ObjectId
+module.exports={
+dosignup:(userdata)=>{
+return new Promise(async(resolve,reject)=>{
+    userdata.Password=await bcrypt.hash(userdata.Password,10);
+    db.get().collection('user').insertOne(userdata).then(()=>{
+        resolve(data);
+    })
+        
+    })
+},
+dologin:(userdata)=>{
+    return new Promise(async(resolve,reject)=>{
+    let response={}
+    let user=await db.get().collection('user').findOne({Email:userdata.Email})
+    if(user){
+     bcrypt.compare(userdata.Password,user.Password).then((status)=>{
+        if(status){console.log('success');
+                   response.user=user;
+                   response.status=true         
+                  resolve(response)}
+        else{console.log('failed');
+               resolve({status:false})}})}
+
+    else
+    {console.log('failed')
+    resolve({status:false})} 
+     })
+    },
+    addtoCart:(proId,userId)=>{
+        let proObj={
+            item:new objectId(proId),
+            qty:1
+        }
+        return new Promise(async(resolve,reject)=>{
+            let cart=await db.get().collection('cart').findOne({user:new objectId(userId)})
+            if(cart){
+             let proExist=cart.products.findIndex(product=>product.item==proId)
+             if(proExist!=-1)
+                {
+                    db.get().collection('cart').updateOne({user:new objectId(userId),'products.item':new objectId(proId)},
+                {
+                    $inc:{'products.$.qty':1}
+                }).then(()=>{
+                    resolve()
+                })
+                }  
+           else{ db.get().collection('cart').updateOne({user: new objectId(userId)},
+        {
+            $push:{products:proObj}
+        }).then((response)=>{
+            resolve()
+        })}
+            }
+            else{
+                let cartObj={
+                    user:new objectId(userId),
+                    products:[proObj]
+                }
+                db.get().collection('cart').insertOne(cartObj).then((response)=>{
+                    resolve()
+                })
+            }
+        })
+    },
+    getCartItems:(userId)=>{
+        return new Promise(async(resolve,reject)=>{
+       let cartItems=await db.get().collection('cart').aggregate([
+                {
+                    $match:{user: new objectId(userId)}
+
+                },
+                {
+                    $unwind:"$products"
+                },
+                {
+                    $project:{
+                        item:"$products.item",
+                        qty:"$products.qty"
+                    }
+
+                },
+                {
+                    $lookup:{
+                        from:'product',
+                        localField:'item',
+                        foreignField:'_id',
+                        as:'product'
+                     }
+                },
+                {
+                    $project:{
+                        item:1,qty:1,product:{$arrayElemAt:['$product',0]}
+                    }
+                }
+         ]).toArray()
+            resolve(cartItems)
+        })
+    },
+   getCartCount:(userId)=>{
+        return new Promise(async(resolve,reject)=>{
+            let count=0
+            let cart= await db.get().collection('cart').findOne({user:new objectId(userId)})
+            if(cart)
+                {
+             for(let i=0;i<parseInt(cart.products.length);i++)
+          {         
+            count+=cart.products[i].qty}
+             }
+            resolve(count)
+        })
+
+    },
+    changeProductQty:(details)=>{
+        cartId=details.cart       
+      proId=details.product 
+     count=parseInt(details.count)
+     qty=parseInt(details.qty)
+return new Promise((resolve,reject)=>
+{
+   if(count==-1 && qty==1) 
+    { db.get().collection('cart').updateOne({_id:new objectId(cartId)},
+   {
+       $pull:{products:{item:new objectId(proId)}}
+   }).then((response)=>{
+    resolve({removeProduct:true})
+   })  
+    } 
+    else{
+    db.get().collection('cart').updateOne({_id:new objectId(cartId),'products.item':new objectId(proId)},
+                    {
+                        $inc:{'products.$.qty':count}
+                    })
+                    resolve(true)}
+})
+    },
+   removeProduct:(details)=>{
+    console.log(details);
+    cartId=details.cartId;
+    proId=details.proId;
+    return new Promise((resolve,reject)=>{
+        
+        db.get().collection('cart').updateOne({_id:new objectId(cartId)},
+   {
+       $pull:{products:{item:new objectId(proId)}}
+   }).then((response)=>{
+    resolve(true)
+    
+   })  
+    })
+   },
+priceTotal:(userId)=>{
+    return new Promise(async(resolve,reject)=>{
+        let total=await db.get().collection('cart').aggregate([
+                 {
+                     $match:{user: new objectId(userId)}
+ 
+                 },
+                 {
+                     $unwind:"$products"
+                 },
+                 {
+                     $project:{
+                         item:"$products.item",
+                         qty:"$products.qty"
+                     }
+ 
+                 },
+                 {
+                     $lookup:{
+                         from:'product',
+                         localField:'item',
+                         foreignField:'_id',
+                         as:'product'
+                      }
+                 },
+                 {
+                     $project:{
+                         item:1,qty:1,product:{$arrayElemAt:['$product',0]}
+                     }
+                 },
+                 {
+                 $project:{
+                    total:{$sum:{$multiply:['$qty','$product.price']}}
+
+                 } 
+                }
+          ]).toArray()
+          console.log(total)
+             resolve(total[0].total) 
+         })
+}
+
+}

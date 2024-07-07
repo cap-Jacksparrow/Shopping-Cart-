@@ -1,0 +1,23 @@
+.header{
+  background: rgb(233, 13, 24);
+  width: 100%;
+  height:100px;
+}
+.logo{
+  background-color: #3313d1;
+  text-decoration: none;
+  font-weight: bold;
+  color: blueviolet;
+}
+body{ 
+   width:100%;
+   background-color: rgb(16, 44, 78);
+   height: 468px;
+}
+h1{
+  color: aquamarine;
+}
+img{
+  height:30%;
+  width:40%;
+}

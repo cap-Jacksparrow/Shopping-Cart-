@@ -1,0 +1,14 @@
+{{#each products}}
+   
+   <div class="card" style="margin-left:2rem;margin-top:2rem;width:15rem;display:inline-flex;">
+  <img src="/productImages/{{this._id}}.jpg" width="100px" height="100px" ><br>
+  <div class="card-body">
+    <h5 class="card-title">{{this.name}}</h5>
+    <p class="card-text">{{this.des}}</p>
+    <h5>{{this.price}}</h5>
+    <button  onclick="cartCount('{{this._id}}')" style="background-color: aqua;" >Add to cart</button></div>
+  </div>
+ 
+{{/each}}
+
+

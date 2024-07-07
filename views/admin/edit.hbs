@@ -1,0 +1,15 @@
+<h1>Edit PRODUCTS</h1>
+
+<form   action="/admin/edit/{{products._id}}" method="post" enctype="multipart/form-data">
+<img src="/productImages/{{products._id}}.jpg" width="100px" height="100px" id="viewimg">
+<input type="file" name="image" onchange="viewimage(event)">
+<input type="text" name="name" value="{{products.name}}">
+<input type="text" name="des" value="{{products.des}}">
+<input type="number" name="price" value="{{products.price}}">
+
+<button  type="submit">submit</button></form>
+<script>
+    function viewimage(event){
+        document.getElementById('viewimg').src=URL.createObjectURL(event.target.files[0])
+    }
+</script>
