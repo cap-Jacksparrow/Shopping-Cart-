@@ -113,7 +113,7 @@ dologin:(userdata)=>{
         })
 
     },
-    changeProductQty:(details)=>{
+    changeProductQty:(details)=>{ 
         cartId=details.cart       
       proId=details.product 
      count=parseInt(details.count)
@@ -133,7 +133,7 @@ return new Promise((resolve,reject)=>
                     {
                         $inc:{'products.$.qty':count}
                     })
-                    resolve(true)}
+                    resolve({status:true})}
 })
     },
    removeProduct:(details)=>{
@@ -182,15 +182,44 @@ priceTotal:(userId)=>{
                      }
                  },
                  {
-                 $project:{
+                 $group:{_id:null,
                     total:{$sum:{$multiply:['$qty','$product.price']}}
 
                  } 
                 }
           ]).toArray()
           console.log(total)
-             resolve(total[0].total) 
+             resolve(total[0].total)
+              
          })
+},
+ProductsList:(userId)=>{
+    return new Promise(async(resolve,reject)=>{
+        let cart= await db.get().collection('cart').findOne({user:new objectId(userId)})
+        resolve(cart.products)
+    })
+},
+OrderDetails:(order,products,total)=>{
+    return new Promise((resolve,reject)=>{
+let status=order['paymentMethod']==='cod'?'placed':'pending'
+let orderObj={
+    deliverydetails:{
+Firstname:order.firstname,
+Lastname:order.lastname,  
+Email:order.email,
+Address:order.address,
+pincode:order.pincode
+},
+user:new objectId(order.user),
+paymentmethod:order['paymentMethod'],
+products:products,
+TotalAmount:total,
+status:status
+}
+ db.get().collection('order').insertOne(orderObj).then((response)=>{
+    resolve()
+ })
+})
 }
 
 }

@@ -1,4 +1,4 @@
-<p>cart</p>
+<h2>cart</h2>
 <br>
 <table border="2px">
   <tr>
@@ -18,25 +18,27 @@
     <td>{{this.product.price}}</td>
     <td><img width="70px" height="40px" src="/productImages/{{this.product._id}}.jpg" alt="no image"></td>
 
-    <td><button type="button" onclick="changeqty('{{this._id}}','{{this.product._id}}',-1)">-</button><span
+    <td><button type="button" onclick="changeqty('{{this._id}}','{{this.product._id}}','{{../user._id}}',-1)">-</button><span
         id="{{this.product._id}}">{{this.qty}}</span> <button type="button"
-        onclick="changeqty('{{this._id}}','{{this.product._id}}',1)">+</button></td>
+        onclick="changeqty('{{this._id}}','{{this.product._id}}','{{../user._id}}',1)">+</button></td>
     <td><button type="button" onclick="removePro('{{this._id}}','{{this.product._id}}')">remove</button></td>
   </tr>{{/each}}
 </table>
-<h3 class="float-right ml-5 mt-2">Total Rs.{{total}}</h3>
-<button class="float-right mr-15 mt-2" >Place Order</button>
+<button  ><a href="/checkout" style="text-decoration: none;">Place Order</a></button>
+<h3>Total Rs. </h3><span id="totalvalue">{{total}}</span>
 <script>
-  function changeqty(cartId, proId, count) {
+  function changeqty(cartId, proId,user,count) {
     let qty = parseInt(document.getElementById(proId).innerHTML)
     count = parseInt(count)
+   
     $.ajax({
       url: '/change-product-quantity',
       data: {
         cart: cartId,
         product: proId,
         count: count,
-        qty: qty
+        qty: qty,
+        user:user
       },
       method: 'post',
       success: function (response) {
@@ -46,6 +48,7 @@
         }
         else {
           document.getElementById(proId).innerHTML = qty + count;
+           document.getElementById('totalvalue').innerHTML = response.total;
         }
       }
     })
