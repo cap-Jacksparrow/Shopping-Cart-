@@ -1,1 +1,18 @@
-<h2>orders</h2>
+<h2>Order Details</h2>
+
+<table border="1">
+  <tr>  
+<th>Date</th>
+<th>total</th>
+<th>Payment Mode</th>
+<th>Status</th>
+</tr>{{#each orders}}
+<tr>
+    <td>{{this.Date}}</td>
+    <td>{{this.TotalAmount}}</td>
+    <td>{{this.paymentmethod}}</td>
+    <td>{{this.status}}</td>
+    <td><button onclick="window.location.href = '/vieworderproducts/{{this._id}}'">view products</button></td>
+</tr>{{/each}}
+
+</table>

@@ -91,8 +91,22 @@ router.post('/checkout',async(req,res)=>{
   let total=await userhelper.priceTotal(req.session.user._id)
   products=await userhelper.ProductsList(req.session.user._id)
  userhelper.OrderDetails(req.body,products,total).then((response)=>{
-  res.json({status:true})
+  res.json(response)
+  console.log(response)
  })
-
+ 
+}) 
+router.get('/order-success',(req,res)=>{
+  res.render('user/order-success',{user:req.session.user})
+})
+router.get('/orders',async(req,res)=>{
+let orders= await userhelper.getOrders(req.session.user._id)
+console.log(orders)
+res.render('user/orders',{orders,user:req.session.user})
 })   
-module.exports = router;    
+router.get('/vieworderproducts/:id',async(req,res)=>{
+  products=await userhelper.OrderProducts(req.params.id) 
+  console.log(products)
+  res.render('user/orderproducts',{products,user:req.session.user})
+})   
+module.exports = router;     

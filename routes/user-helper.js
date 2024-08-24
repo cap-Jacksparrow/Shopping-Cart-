@@ -214,12 +214,55 @@ user:new objectId(order.user),
 paymentmethod:order['paymentMethod'],
 products:products,
 TotalAmount:total,
-status:status
+status:status,
+Date:new Date()
 }
  db.get().collection('order').insertOne(orderObj).then((response)=>{
     resolve()
  })
-})
+ resolve({status:true})})
+},
+getOrders:(userId)=>{
+    return new Promise(async(resolve,reject)=>{
+   let  orders= await db.get().collection('order').find({user:new objectId(userId)}).toArray()
+        resolve(orders)
+     
+    }) 
+},
+OrderProducts:(orderId)=>{
+    return new Promise(async(resolve,reject)=>{
+        let products=await db.get().collection('order').aggregate([
+                 { 
+                     $match:{_id: new objectId(orderId)}
+ 
+                 },
+                 {
+                     $unwind:"$products"
+                 },
+                 {
+                     $project:{
+                         item:"$products.item",
+                         qty:"$products.qty"
+                     }
+ 
+                 },
+                 {
+                     $lookup:{
+                         from:'product',
+                         localField:'item',
+                         foreignField:'_id',
+                         as:'product'
+                      }
+                 },
+                 {
+                     $project:{
+                         item:1,qty:1,product:{$arrayElemAt:['$product',0]}
+                     }
+                 }
+          ]).toArray() 
+             resolve(products)
+         })
+
 }
 
 }

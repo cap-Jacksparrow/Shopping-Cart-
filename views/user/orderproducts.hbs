@@ -1,0 +1,12 @@
+{{#each products}}
+   
+   <div class="card" style="margin-left:2rem;margin-top:2rem;width:15rem;display:flex;">
+  <img src="/productImages/{{this.product._id}}.jpg" width="100px" height="100px" ><br>
+  <div class="card-body">
+    <h5 class="card-title">{{this.product.name}}</h5>
+    <p class="card-text">{{this.product.des}}</p>
+    <h5>{{this.product.price}}</h5>
+   <h6>Quantity:{{this.qty}}</h6>
+  </div>
+ 
+{{/each}}

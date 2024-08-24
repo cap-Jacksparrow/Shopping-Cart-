@@ -13,7 +13,7 @@ module.exports={
          resolve(products)
         })
         
-    },
+    }, 
     deleteProduct:(proId)=>{ 
         return new Promise((resolve,reject)=>{
         db.get().collection('product').deleteOne({_id:new objectId(proId)}).then((response)=>{
@@ -36,11 +36,11 @@ updateProduct:(proId,productdetails)=>{
         $set:{
         name:productdetails.name,
         des:productdetails.des,
-        price:productdetails.price}
+        price:parseInt(productdetails.price)}
     }
      ).then((response)=>{
         resolve()
-    })
+    }) 
      })
     }
 }
