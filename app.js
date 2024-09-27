@@ -26,7 +26,7 @@ db.connect((err)=>{
   if(err) console.log("connection error ",err);
   else console.log("database connected");
 })
-app.use('Cap-Jacksparrow/github.io/Shopping-Cart-/', userRouter);
+app.use('cap-Jacksparrow.github.io/Shopping-Cart-/', userRouter);
 app.use('/admin', adminRouter);
 
 // catch 404 and forward to error handler
