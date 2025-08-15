@@ -1,0 +1,63 @@
+<nav class="bg-gray-900 border-b w-full border-gray-700 px-4 py-2">
+  <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between">
+    
+   <!-- Logo -->
+      <a href="/admin" class="text-lg font-bold text-white">E-shopping</a>
+
+
+    <!-- Navigation Links -->
+    <ul class="flex space-x-6 text-sm">
+      <li>
+        <a href="/admin" class="flex flex-col items-center text-gray-400 hover:text-white transition">
+          <svg class="w-6 h-6 mb-1" fill="currentColor">
+            <use xlink:href="#home"></use>
+          </svg>
+          Home
+        </a>
+      </li>
+      <li>
+        <a href="/admin/getOrderDetails" class="flex flex-col items-center text-gray-300 hover:text-white transition">
+          <svg class="w-6 h-6 mb-1" fill="currentColor">
+            <use xlink:href="#table"></use>
+          </svg>
+          All Orders
+        </a>
+      </li>
+    </ul>
+
+    <!-- Dropdown -->
+    <div class="relative">
+      <button onclick="toggleDropdown()" 
+              class="bg-gray-700 text-white px-4 py-2 rounded-md flex items-center hover:bg-gray-600 transition">
+        {{#if admin}} {{admin.Name}} {{else}} Admin {{/if}}
+        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      <div id="dropdownMenu" 
+           class="hidden absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg z-50">
+        {{#if admin}}
+          <a href="/admin/logout" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</a>
+        {{else}}
+          <a href="/admin/adminlogin" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Login</a>
+        {{/if}}
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+<script>
+  function toggleDropdown() {
+    document.getElementById('dropdownMenu').classList.toggle('hidden');
+  }
+  // Optional: Close dropdown when clicking outside
+  window.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('dropdownMenu');
+    if (!e.target.closest('.relative')) {
+      dropdown.classList.add('hidden');
+    }
+  });
+</script>

@@ -1,0 +1,38 @@
+<div class="flex justify-center items-center min-h-screen bg-gray-100">
+  <div class="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
+    <h2 class="text-2xl font-bold text-center mb-6">📝 Sign Up</h2>
+
+    <form action="/signup" method="POST" enctype="multipart/form-data">
+      <div class="mb-4">
+        <label for="name" class="block text-gray-700 font-medium mb-1">Full Name</label>
+        <input type="text" id="name" name="Name" placeholder="Your full name" 
+               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none" 
+               required>
+      </div>
+
+      <div class="mb-4">
+        <label for="email" class="block text-gray-700 font-medium mb-1">Email Address</label>
+        <input type="email" id="email" name="Email" placeholder="you@example.com" 
+               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none" 
+               required>
+      </div>
+
+      <div class="mb-6">
+        <label for="password" class="block text-gray-700 font-medium mb-1">Password</label>
+        <input type="password" id="password" name="Password" placeholder="Create a password" 
+               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none" 
+               required>
+      </div>
+
+      <div>
+        <button type="submit" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition duration-300">
+          Sign Up
+        </button>
+      </div>
+    </form>
+
+    <div class="text-center mt-4">
+      <a href="/login" class="text-green-500 hover:underline">Already have an account? Login</a>
+    </div>
+  </div>
+</div>

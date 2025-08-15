@@ -1,0 +1,23 @@
+<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 p-4">
+    {{#each orders}}
+    <div class="bg-white rounded-xl shadow-md p-4 border hover:shadow-lg transition-shadow duration-300">
+        <div class="text-lg font-semibold text-gray-800">
+            Name: {{this.deliverydetails.Firstname}} {{this.deliverydetails.Lastname}}
+        </div>
+        <div class="text-sm text-gray-600 mt-1">
+            Date: {{this.Date}}
+        </div>
+        <div class="text-sm text-gray-600 mt-1">
+            User ID: {{this.user}}
+        </div>
+        <div class="text-sm text-gray-600 mt-1">
+            Status: {{this.status}}
+        </div>
+        <div class="mt-4">
+            <a href="/details" class="inline-block text-sm font-medium text-indigo-600 hover:text-indigo-800">
+                More details →
+            </a>
+        </div>
+    </div>
+    {{/each}}
+</div>

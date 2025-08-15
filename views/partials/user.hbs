@@ -1,0 +1,93 @@
+<nav class="bg-blue-600 w-full text-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <!-- Logo -->
+      <a href="#" class="text-lg font-bold">E-shopping</a>
+
+      <!-- Mobile Menu Button -->
+      <div class="flex lg:hidden">
+        <button id="mobile-menu-button" class="text-white focus:outline-none">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Menu Items -->
+      <div class="hidden lg:flex lg:space-x-6 items-center">
+        <a href="/" class="hover:text-gray-200">Home</a>
+
+        {{#if user}}
+        <a href="/orders" class="hover:text-gray-200">Orders</a>
+        <a href="/cart" class="relative hover:text-gray-200">
+          Cart
+          {{#if cartCount}}<span
+            class="absolute  -top-2 -right-3 bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full" id="cart-count">
+            {{cartCount}}
+          </span>
+          {{/if}}
+        </a>
+        {{/if}}
+
+        <!-- Dropdown -->
+        <div class="relative">
+          <button id="accountBtn"
+            class="bg-gray-700 px-3 py-1 rounded hover:bg-gray-800 focus:outline-none flex items-center space-x-1">
+            <span>{{#if user}}{{user.Name}}{{else}}Account{{/if}}</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div id="accountMenu"
+            class="absolute hidden  bg-white text-black right-0 mt-1 rounded shadow-lg w-32">
+            {{#if user}}
+            <a href="/logout" class="block px-4 py-2 hover:bg-gray-100">Logout</a>
+            {{else}}
+            <a href="/login" class="block px-4 py-2 hover:bg-gray-100">Login</a>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden lg:hidden px-4 pb-3 space-y-2">
+    <a href="/" class="block hover:text-gray-200">Home</a>
+    {{#if user}}
+    <a href="/orders" class="block hover:text-gray-200">Orders</a>
+    <a href="/cart" class="block hover:text-gray-200">
+      Cart
+      <span
+        class="ml-2 bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+        {{cartCount}}
+      </span>
+    </a>
+    {{/if}}
+    {{#if user}}
+    <a href="/logout" class="block hover:text-gray-200">Logout</a>
+    {{else}}
+    <a href="/login" class="block hover:text-gray-200">Login</a>
+    {{/if}}
+  </div>
+</nav>
+
+<script>
+  // Mobile menu toggle
+  const btn = document.getElementById("mobile-menu-button");
+  const menu = document.getElementById("mobile-menu");
+
+  btn.addEventListener("click", () => {
+    menu.classList.toggle("hidden");
+  });
+
+const accbtn=document.getElementById('accountBtn')
+const accMenu=document.getElementById('accountMenu')
+accbtn.addEventListener('click',()=>{
+  accMenu.classList.toggle('hidden');
+})
+ 
+
+</script>
