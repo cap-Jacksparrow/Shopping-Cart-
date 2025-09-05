@@ -1,6 +1,13 @@
 var db=require('../config/connection')
 var bcrypt=require('bcrypt')
 var objectId=require("mongodb").ObjectId
+var Razorpay=require("razorpay");
+var crypto=require("crypto");
+require("dotenv").config();
+ var instance=new Razorpay({
+            key_id:process.env.RAZORPAY_KEY_ID, 
+            key_secret:process.env.RAZORPAY_KEY_SECRET
+        });
 module.exports={
 dosignup:(userdata)=>{
 return new Promise(async(resolve,reject)=>{
@@ -30,17 +37,15 @@ dologin:(userdata)=>{
      })
     },
     addtoCart:(proId,userId)=>{
-        console.log("userId",userId);
-        console.log("proId",proId);
+       
         let proObj={
             item:new objectId(proId),
             qty:1
         }
-        console.log("proObj",proObj);
+      
        return new Promise(async(resolve,reject)=>{
-            console.log("proObj",proObj);
+          
             let cart=await db.get().collection('cart').findOne({user:new objectId(userId)})
-            console.log("cart",cart);
             if(cart){
              let proExist=cart.products.findIndex(product=>product.item==proId)
              if(proExist!=-1)
@@ -69,7 +74,7 @@ dologin:(userdata)=>{
                 }
                 db.get().collection('cart').insertOne(cartObj).then((response)=>{
                     console.log("cart created");
-                    console.log(response);
+                   
                     resolve()
                 }).catch((err)=>{
                     console.log("Error in creating cart", err);
@@ -108,7 +113,7 @@ dologin:(userdata)=>{
                     $project:{
                         item:1,qty:1,product:{$arrayElemAt:['$product',0]}
                     }
-                }
+                } 
          ]).toArray()
             resolve(cartItems)
         })
@@ -117,7 +122,7 @@ dologin:(userdata)=>{
         return new Promise(async(resolve,reject)=>{
             let count=0
             let cart= await db.get().collection('cart').findOne({user:new objectId(userId)})
-            console.log("cart",cart);
+         
             if(cart)
                 {
              for(let i=0;i<parseInt(cart.products.length);i++)
@@ -152,20 +157,36 @@ return new Promise((resolve,reject)=>
 })
     },
    removeProduct:(details)=>{
-    console.log(details);
+ 
     cartId=details.cartId;
     proId=details.proId;
-    return new Promise((resolve,reject)=>{
+    return new Promise(async(resolve,reject)=>{
         
-        db.get().collection('cart').updateOne({_id:new objectId(cartId)},
-   {
-       $pull:{products:{item:new objectId(proId)}}
-   }).then((response)=>{
-    resolve(true)
-    
-   })  
-    })
-   },
+      try {
+      const cart = await db.get().collection('cart').findOne(
+        { _id: new objectId(cartId) },
+        { projection: { products: 1 } } // only get products field
+      );
+
+      // find the product's qty before removing
+      const product = cart?.products.find(
+        (p) => p.item.toString() === proId
+      );
+
+      let removedQty = product ? product.qty : 0;
+
+      // now remove it
+      const response = await db.get().collection('cart').updateOne(
+        { _id: new objectId(cartId) },
+        { $pull: { products: { item: new objectId(proId) } } }
+      );
+
+      resolve({ status: true, qty: removedQty });
+    } catch (err) {
+      reject(err);
+    }
+  });
+},
 priceTotal:(userId)=>{
     return new Promise(async(resolve,reject)=>{
         let total=await db.get().collection('cart').aggregate([
@@ -203,7 +224,7 @@ priceTotal:(userId)=>{
                  } 
                 }
           ]).toArray()
-          console.log(total)
+          
              resolve(total[0].total)    
          })
 },
@@ -213,7 +234,7 @@ ProductsList:(userId)=>{
         resolve(cart.products)
     })
 },
-OrderDetails:(order,products,total)=>{
+PlaceOrder:(order,products,total)=>{
     return new Promise((resolve,reject)=>{
 let status=order['paymentMethod']==='cod'?'placed':'pending'
 let orderObj={
@@ -224,7 +245,7 @@ Email:order.email,
 Address:order.address,
 pincode:order.pincode
 },
-user:new objectId(order.user),
+user:new objectId(order.user), 
 paymentmethod:order['paymentMethod'],
 products:products,
 TotalAmount:total,
@@ -232,9 +253,10 @@ status:status,
 Date:new Date()
 }
  db.get().collection('order').insertOne(orderObj).then((response)=>{
-    resolve()
+    db.get().collection('cart').deleteOne({user:new objectId(order.user)})
+      resolve(response.insertedId.toString())
  })
- resolve({status:true})})
+ })
 },
 getOrders:(userId)=>{
     return new Promise(async(resolve,reject)=>{
@@ -277,6 +299,20 @@ OrderProducts:(orderId)=>{
              resolve(products)
          })
 
-}
-
-}
+},
+generateRazorpay:(orderId,total)=>{
+    return new Promise((resolve,reject)=>{
+        var options={ 
+            amount:total*100,
+            currency:"INR",
+            receipt:orderId
+        }
+        instance.orders.create(options,function(err,order){
+            console.log("order ",order);
+            console.log("error",err);
+            resolve(order)
+        })
+       })
+    }
+} 
+     

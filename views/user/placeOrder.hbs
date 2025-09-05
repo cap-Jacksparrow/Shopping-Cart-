@@ -71,8 +71,8 @@
         </label>
 
         <label class="flex items-center space-x-2">
-          <input id="card" name="paymentMethod" type="radio" value="card" class="h-4 w-4 text-blue-500">
-          <span>Debit Card</span>
+          <input id="card" name="paymentMethod" type="radio" value="online" class="h-4 w-4 text-blue-500">
+          <span>Online payment</span>
         </label>
       </div>
 
@@ -92,14 +92,69 @@
 
 <script>
   $('#checkout-form').submit((e) => {
-    e.preventDefault();
-    $.ajax({
-      url: '/checkout',
-      method: 'post',
-      data: $('#checkout-form').serialize(),
-      success: (response) => {
-        if (response.status) location.href = '/order-success';
-      },
-    });
+  e.preventDefault();
+
+  const formData = Object.fromEntries(new FormData($('#checkout-form')[0]));
+
+  $.ajax({
+    url: '/checkout',
+    method: 'POST',
+    contentType: 'application/json',  
+    data: JSON.stringify(formData),    // ✅ send JSON body
+    success: (response) => {
+      if (response.codSuccess) {
+        location.href = '/order-success';
+      } else {
+        razorpayPayment(response);
+      }
+    }
   });
+});
+
+
+  function razorpayPayment(order){
+    console.log(order.amount);
+    var options={
+    "key":"rzp_test_RAGHfNjUKxQAmM",
+    "amount":order.amount,
+    "currency":"INR",
+    "name":"Abhijith",
+    "description":"Test transaction",
+    "image":"",
+    "order_id":order.id,
+    "handler":function(response){
+      alert(response.razorpay_payment_id);
+      alert(response.razorpay_order_id);
+      alert(response.razorpay_signature);
+
+      verifyPayment(response,order)
+    },
+    "prefill":{
+      "name":"abh",
+      "gmail":"abc2@gmail.com",
+      "contact":"7679879"
+    },
+    "notes":{
+      "address":"Razrpay corporate Office"
+    },
+    "theme":{
+      "color":"#F37254"
+    }
+    };
+    var rzp1=new Razorpay(options);
+    rzp1.open();
+  } 
+
+    function verifyPayment(payment,order){
+      $.ajax({
+        url:'/verify-payment',
+        data:{
+          payment,
+          order
+        },
+        method:'post'
+
+      })
+    }
+  
 </script>

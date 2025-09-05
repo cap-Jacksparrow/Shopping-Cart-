@@ -45,6 +45,7 @@
 {{/if}}
 
 <script>
+  $('.cart-count').hide();
   function changeqty(cartId, proId, user, count) {
     let qty = parseInt(document.getElementById(proId).innerHTML);
     count = parseInt(count);
@@ -71,9 +72,10 @@
       data: { cartId, proId },
       method: 'post',
       success: function (response) {
-        if (response) {
+        if (response.status) {
           alert("Product removed");
-          location.reload();
+         location.reload();
+          reduceCount(response.qty); 
         }
       },
       error: function (error) {

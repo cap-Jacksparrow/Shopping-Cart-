@@ -16,7 +16,7 @@ router.get('/', async function(req, res){
   if(user){
   cartCount= await userhelper.getCartCount(req.session.user._id)}
   producthelper.getproducts().then((products)=>{
-    console.log(products)
+   
     res.render('user/viewproducts',{products,user,cartCount});
   })
   
@@ -40,7 +40,6 @@ router.post('/signup',(req,res)=>{
     if(user)
     req.session.loggedIn=true
      req.session.user=user
-     console.log(user)
     res.redirect('/') 
   });
 });
@@ -62,21 +61,22 @@ router.get('/logout',(req,res)=>{
   res.redirect(302,'/'); 
 }) 
 router.get("/cart",verifyLogin,async(req,res)=>{ 
-  products=await userhelper.getCartItems(req.session.user._id)
+let products=await userhelper.getCartItems(req.session.user._id)
+let cartCount= await userhelper.getCartCount(req.session.user._id)
   let user=req.session.user 
   if(products.length==0)
     {
-    res.render("user/cart",{user,products:[]})
+    res.render("user/cart",{user,products:[],cartCount})
   } 
   else  
   {
   let total=await userhelper.priceTotal(req.session.user._id)
-  res.render("user/cart",{user,products,total}) }
+  res.render("user/cart",{user,products,total,cartCount}) }
 })
 router.get('/add-to-cart/:id',(req,res)=>{
   userhelper.addtoCart(req.params.id,req.session.user._id).then(()=>{
     res.json({status:true})
-  }).catch((err)=>{
+  }).catch((err)=>{ 
     console.log("Error in adding to cart", err);
     res.json({status:false, error: "Failed to add item to cart."});
   })
@@ -97,12 +97,19 @@ router.get('/checkout',async(req,res)=>{
   res.render('user/placeOrder',{total,user:req.session.user})
 })
 router.post('/checkout',async(req,res)=>{
-  console.log(req.body)
   let total=await userhelper.priceTotal(req.session.user._id)
-  products=await userhelper.ProductsList(req.session.user._id)
- userhelper.OrderDetails(req.body,products,total).then((response)=>{
-  res.json(response)
-  console.log(response)
+  let products=await userhelper.ProductsList(req.session.user._id)
+ userhelper.PlaceOrder(req.body,products,total).then((orderId)=>{
+  console.log(req.body);
+  if(req.body['paymentMethod']=='cod')
+  {  
+    res.json({codSuccess:true});
+  }
+  else{
+  userhelper.generateRazorpay(orderId,total).then((response)=>{
+    res.json(response)
+  }) 
+  }
  })
  
 }) 
@@ -112,7 +119,6 @@ router.get('/order-success',(req,res)=>{
 router.get('/orders',async(req,res)=>{
 let user=req.session.user
 let orders= await userhelper.getOrders(user._id)
-console.log("order",orders)
 res.render('user/orders',{user,orders})
 
 })
@@ -120,4 +126,7 @@ router.get('/vieworderproducts/:id',async(req,res)=>{
   products=await userhelper.OrderProducts(req.params.id) 
   res.render('user/orderproducts',{products,user:req.session.user})
 })   
+router.get('/verify-payment',(req,res)=>{
+
+})
 module.exports = router;     

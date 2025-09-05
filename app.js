@@ -11,6 +11,9 @@ var db = require('./config/connection');
 var session = require('express-session');
 var http = require('http');
 var debug = require('debug')('node.js:server');
+var jwt=require("jsonwebtoken");
+var  bcrypt=require("bcrypt");
+
 
 // Initialize the Express app
 var app = express();

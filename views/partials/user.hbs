@@ -22,11 +22,11 @@
         <a href="/orders" class="hover:text-gray-200">Orders</a>
         <a href="/cart" class="relative hover:text-gray-200">
           Cart
-          {{#if cartCount}}<span
-            class="absolute  -top-2 -right-3 bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full" id="cart-count">
+        <span
+            class="cart-count absolute  -top-2 -right-3 bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full" id="cart-count">
             {{cartCount}}
           </span>
-          {{/if}}
+        
         </a>
         {{/if}}
 
@@ -60,10 +60,12 @@
     <a href="/orders" class="block hover:text-gray-200">Orders</a>
     <a href="/cart" class="block hover:text-gray-200">
       Cart
+        
       <span
-        class="ml-2 bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+        class=" cart-count ml-2 bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full" >
         {{cartCount}}
       </span>
+      
     </a>
     {{/if}}
     {{#if user}}
@@ -75,6 +77,15 @@
 </nav>
 
 <script>
+   $('.cart-count').each(function() {
+  if(parseInt($(this).text()) < 1) {
+    $(this).hide();
+  } else {
+    $(this).show();
+  }
+});
+
+
   // Mobile menu toggle
   const btn = document.getElementById("mobile-menu-button");
   const menu = document.getElementById("mobile-menu");
