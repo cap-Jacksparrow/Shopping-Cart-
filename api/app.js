@@ -13,8 +13,9 @@ var http = require('http');
 var debug = require('debug')('node.js:server');
 var jwt=require("jsonwebtoken");
 var  bcrypt=require("bcrypt");
-import serverless from "serverless-http";
-import dotenv from "dotenv";
+const dotenv = require("dotenv");
+const serverless = require("serverless-http");
+
 
 dotenv.config();
 
