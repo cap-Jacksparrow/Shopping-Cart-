@@ -13,6 +13,10 @@ var http = require('http');
 var debug = require('debug')('node.js:server');
 var jwt=require("jsonwebtoken");
 var  bcrypt=require("bcrypt");
+import serverless from "serverless-http";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 
 // Initialize the Express app
@@ -72,12 +76,12 @@ var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 // Create HTTP server
-var server = http.createServer(app);
+/*var server = http.createServer(app);
 
 // Listen on provided port, on all network interfaces.
 server.listen(port);
 server.on('error', onError);
-server.on('listening', onListening);
+server.on('listening', onListening);*/
 
 /**
  * Normalize a port into a number, string, or false.
@@ -127,4 +131,4 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
-module.exports = app;
+export default serverless(app);
