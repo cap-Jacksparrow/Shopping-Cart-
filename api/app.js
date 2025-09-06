@@ -132,4 +132,4 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
-export default serverless(app);
+module.exports = serverless(app);
