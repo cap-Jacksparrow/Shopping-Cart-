@@ -29,8 +29,8 @@ app.set('view engine', 'hbs');
 app.engine('hbs', hbs.engine({ 
   extname: 'hbs', 
   defaultLayout: 'Layout', 
-  layoutsDir: path.join(__dirname, '../views'), 
-  partialsDir:path.join(__dirname, '../views'),
+  layoutsDir: path.join(__dirname, '../views/layouts'), 
+  partialsDir:path.join(__dirname, '../views/partials'),
   helpers:{
     eq:(a,b)=>a===b
   }
