@@ -1,4 +1,4 @@
-varateError = require('http-errors');
+var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -14,7 +14,6 @@ var debug = require('debug')('node.js:server');
 var jwt=require("jsonwebtoken");
 var  bcrypt=require("bcrypt");
 const dotenv = require("dotenv");
-const serverless = require("serverless-http");
 
 
 dotenv.config();
@@ -77,12 +76,12 @@ var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 // Create HTTP server
-/*var server = http.createServer(app);
+var server = http.createServer(app);
 
 // Listen on provided port, on all network interfaces.
 server.listen(port);
 server.on('error', onError);
-server.on('listening', onListening);*/
+server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
@@ -132,4 +131,3 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
-module.exports = serverless(app);
