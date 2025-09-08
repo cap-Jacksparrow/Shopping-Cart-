@@ -1,19 +1,26 @@
-const mongoClient=require('mongodb').MongoClient
-const state={
-  db:null
-} 
-module.exports.connect=function(done){
+const { MongoClient } = require('mongodb');
 
-  const url=process.env.MONGO_URI;
-  const dbname='shopping';
-  mongoClient.connect(url).then((data)=>{
-   {
-   state.db=data.db(dbname);
-   done();}
-  }).catch((err)=>{
-      return done(err);
+const state = { db: null };
+
+module.exports.connect = function (done) {
+  const url = process.env.MONGO_URI;
+  const dbname = 'shopping';
+
+  MongoClient.connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    ssl: true,   // force TLS
+    tls: true,
   })
-}
-module.exports.get=function(){
+    .then((client) => {
+      state.db = client.db(dbname);
+      done();
+    })
+    .catch((err) => {
+      done(err);
+    });
+};
+
+module.exports.get = function () {
   return state.db;
-}
+};
