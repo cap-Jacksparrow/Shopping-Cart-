@@ -14,7 +14,7 @@ var debug = require('debug')('node.js:server');
 var jwt=require("jsonwebtoken");
 var  bcrypt=require("bcrypt");
 const dotenv = require("dotenv");
-
+const MongoStore=require("connect-mongo");
 
 dotenv.config();
 
@@ -41,7 +41,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({ secret: "key", cookie: { maxAge: 10000000 } }));
+app.use(
+  session({
+    secret: process.env.SESSSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      dbName: 'shopping',
+      collectionName: 'sessions',
+    }),
+    cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 1 day
+  })
+);
 
 // Database connection
 db.connect((err) => {
