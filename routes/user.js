@@ -10,7 +10,7 @@ var router = express.Router();
   }
  }
 /* GET home page. */
-router.get('/home', async function(req, res){
+router.get('/', async function(req, res){
   let user=req.session.user
   let cartCount=null
   if(user){
