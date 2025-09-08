@@ -24,13 +24,13 @@ var app = express();
 app.use(fileUpload());
   
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, './views'));
 app.set('view engine', 'hbs');
 app.engine('hbs', hbs.engine({ 
   extname: 'hbs', 
   defaultLayout: 'Layout', 
-  layoutsDir: __dirname + '/views/layouts/', 
-  partialsDir: __dirname + '/views/partials/',
+  layoutsDir: __dirname + './views/layouts/', 
+  partialsDir: __dirname + './views/partials/',
   helpers:{
     eq:(a,b)=>a===b
   }
