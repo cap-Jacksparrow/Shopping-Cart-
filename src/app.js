@@ -58,7 +58,12 @@ app.use(
 // Database connection
 db.connect((err) => {
   if (err) console.log("Connection error: ", err);
-  else console.log("Database connected");
+  else {
+    console.log("Database connected");
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', onListening);
+  }
 });
 
 // Route handling
@@ -89,12 +94,6 @@ app.set('port', port);
 
 // Create HTTP server
 var server = http.createServer(app);
-
-// Listen on provided port, on all network interfaces.
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
-
 /**
  * Normalize a port into a number, string, or false.
  */
