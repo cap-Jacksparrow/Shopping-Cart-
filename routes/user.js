@@ -11,6 +11,7 @@ var router = express.Router();
  }
 /* GET home page. */
 router.get('/', async function(req, res){
+ try{
   let user=req.session.user
   let cartCount=null
   if(user){
@@ -19,6 +20,10 @@ router.get('/', async function(req, res){
    
     res.render('user/viewproducts',{products,user,cartCount});
   })
+ }
+ catch(err){
+  res.status(500).send("error"+err.message)
+ }
   
 })
 router.get('/signup',(req,res)=>{
