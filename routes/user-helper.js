@@ -13,7 +13,8 @@ dosignup:(userdata)=>{
 return new Promise(async(resolve,reject)=>{
     userdata.Password=await bcrypt.hash(userdata.Password,10);
     db.get().collection('user').insertOne(userdata).then((data)=>{
-        resolve(data);
+        const insertedData = {...userdata,insertedId : data.insertedId}
+        resolve(insertedData);
     })
         
     })
